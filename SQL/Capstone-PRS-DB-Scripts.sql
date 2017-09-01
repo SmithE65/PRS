@@ -11,8 +11,8 @@ CREATE TABLE [User] (
 	Password varchar(10) NOT NULL,
 	FirstName varchar(20) NOT NULL,
 	LastName varchar(20) NOT NULL,
-	Phone varchar(12),
-	Email varchar(75),
+	Phone varchar(12) NOT NULL DEFAULT '',
+	Email varchar(75) NOT NULL DEFAULT '',
 	IsReviewer bit NOT NULL DEFAULT 0,
 	IsAdmin bit NOT NULL DEFAULT 0,
 	Active bit NOT NULL DEFAULT 1,
@@ -30,7 +30,7 @@ CREATE UNIQUE INDEX IUX_UserName
 INSERT into [User]
 	(UserName, Password, FirstName, LastName, Phone, Email, IsReviewer, IsAdmin)
 	VALUES
-	('EDS-Admin', 'adminpw', 'Eric', 'Smith', '015136757888', 'ydrive65@yahoo.com', 1, 1)  -- Create user 'smithed' as Admin
+	('smithed', 'adminpw', 'Eric', 'Smith', '015136757888', 'ydrive65@yahoo.com', 1, 1)  -- Create user 'smithed' as Admin
 */
 
 -- Vendor
@@ -38,12 +38,12 @@ CREATE TABLE Vendor (
 	Id int NOT NULL PRIMARY KEY IDENTITY(1,1),
 	Code varchar(10) NOT NULL UNIQUE,
 	Name varchar(255) NOT NULL,
-	Address varchar(255),
-	City varchar(255),
-	State varchar(2),
-	Zip varchar(5),
-	Phone varchar(12),
-	Email varchar(100),
+	Address varchar(255) NOT NULL DEFAULT '',
+	City varchar(255) NOT NULL DEFAULT '',
+	State varchar(2) NOT NULL DEFAULT '',
+	Zip varchar(5) NOT NULL DEFAULT '',
+	Phone varchar(12) NOT NULL DEFAULT '',
+	Email varchar(100) NOT NULL DEFAULT '',
 	IsPreapproved bit NOT NULL DEFAULT 0,
 	Active bit NOT NULL DEFAULT 1,
 	DateCreated datetime NOT NULL DEFAULT GetDate(),
@@ -55,10 +55,10 @@ CREATE TABLE Vendor (
 CREATE TABLE Product (
 	Id int NOT NULL PRIMARY KEY IDENTITY(1,1),
 	VendorId int NOT NULL FOREIGN KEY REFERENCES Vendor(Id),
-	PartNumber varchar(50),
-	Name varchar(150),
-	Price decimal(10,2),
-	Unit varchar(255),
+	PartNumber varchar(50) NOT NULL UNIQUE,
+	Name varchar(150) NOT NULL,
+	Price decimal(10,2) NOT NULL,
+	Unit varchar(255) NOT NULL,
 	Photopath varchar(255),
 	Active bit NOT NULL DEFAULT 1,
 	DateCreated datetime NOT NULL DEFAULT GetDate(),
@@ -69,7 +69,7 @@ CREATE TABLE Product (
 -- Status
 CREATE TABLE Status (
 	Id int NOT NULL PRIMARY KEY IDENTITY(1,1),
-	Description varchar(20),
+	Description varchar(20) NOT NULL,
 	Active bit NOT NULL DEFAULT 1,
 	DateCreated datetime NOT NULL DEFAULT GetDate(),
 	DateUpdated datetime,
@@ -82,11 +82,11 @@ CREATE TABLE PurchaseRequest (	-- CREATE the PurchaseRequest TABLE
 	UserId int NOT NULL FOREIGN KEY REFERENCES [User](Id),
 	Description varchar(100) NOT NULL,
 	Justification varchar(255) NOT NULL,
-	DateNeeded date,
-	DeliveryMode varchar(25),
-	StatusId int NOT NULL FOREIGN KEY REFERENCES Status(Id),
+	DateNeeded datetime NOT NULL DEFAULT DateAdd(day, 7, GetDate()),
+	DeliveryMode varchar(25) NOT NULL DEFAULT '',
+	StatusId int NOT NULL FOREIGN KEY REFERENCES Status(Id) DEFAULT 1,
 	Total decimal(10,2),
-	SubmittedDate date,
+	SubmittedDate datetime,
 	Active bit,
 	ReasonForRejection varchar(100),
 	DateCreated datetime NOT NULL DEFAULT GetDate(),
